@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Add Identity To Content/ffmpeg.exe
+/Add Identity To Content/ffplay.exe
+/Add Identity To Content/ffprobe.exe
