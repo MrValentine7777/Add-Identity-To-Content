@@ -111,7 +111,7 @@ This project was created with the help of GitHub CoPilot X Chat.
 
 ---
 
-Thank you for using _AddIdentityToContent!_ Hope it helps you manage your content more effectively.
+Thank you for using _Add Identity To Content!_ Hope it helps you manage your content more effectively.
 
 ---
 
