@@ -117,8 +117,4 @@ Thank you for using _AddIdentityToContent!_ Hope it helps you manage your conten
 
 Workflow Dispatch Status
 
-[![.NET Core Console App](https://github.com/MrValentine7777/Add-Identity-To-Content/actions/workflows/dotnet-desktop.yml/badge.svg?event=workflow_dispatch)](https://github.com/MrValentine7777/Add-Identity-To-Content/actions/workflows/dotnet-desktop.yml)
-
-Workflow Run Status
-
-[![.NET Core Console App](https://github.com/MrValentine7777/Add-Identity-To-Content/actions/workflows/dotnet-desktop.yml/badge.svg?event=workflow_run)](https://github.com/MrValentine7777/Add-Identity-To-Content/actions/workflows/dotnet-desktop.yml)
+[![.NET Core Console App](https://github.com/MrValentine7777/Add-Identity-To-Content/actions/workflows/dotnet-desktop.yml/badge.svg?branch=master)](https://github.com/MrValentine7777/Add-Identity-To-Content/actions/workflows/dotnet-desktop.yml)
