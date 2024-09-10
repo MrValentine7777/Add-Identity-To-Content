@@ -1,4 +1,4 @@
-![Watermark](AddIdentityToContent/watermark.png)
+![Watermark](watermark.png)
 
 # AddIdentityToContent
 
