@@ -178,7 +178,7 @@ namespace AddIdentityToContent
             Console.WriteLine("Please be patient, the conversion will finish, even if the progress bar is not at 100%.");
 
             // Start the FFmpeg process to convert the GIF to MP4
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
                 // set foreground colour to green
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -327,7 +327,7 @@ namespace AddIdentityToContent
         private static async Task AddWatermarkToVideoAsync(string inputFilePath, string watermarkPath, string outputFilePath, int currentIndex, int totalFiles)
         {
             // Start the FFmpeg process to add the watermark to the video
-            await Task.Run(() =>
+            return Task.Run(() =>
             {
                 // Set the console text color to yellow
                 Console.ForegroundColor = ConsoleColor.Yellow;
