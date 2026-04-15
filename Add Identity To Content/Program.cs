@@ -4,10 +4,12 @@ global using System.IO;
 global using System.Threading.Tasks;
 global using System.Linq;
 global using System.Diagnostics;
-//Xabe.FFmpeg and ImageMagick are not included in the .NET SDK, you need to install them using NuGet.
+//Xabe.FFmpeg and SixLabors.ImageSharp are not included in the .NET SDK, you need to install them using NuGet.
 // The using directive for Xabe.FFmpeg does not highlight in Visual Studio, but it is still recognized.
 global using Xabe.FFmpeg;
-global using ImageMagick;
+global using SixLabors.ImageSharp;
+global using SixLabors.ImageSharp.Processing;
+global using SixLabors.ImageSharp.PixelFormats;
 global using System.Text.RegularExpressions;
 
 // Developer Notes:
@@ -18,9 +20,9 @@ global using System.Text.RegularExpressions;
 // Sometimes you may have to manually terminate ffmpeg processes in Task Manager.
 // sometimes the gif conversion may only output the converted video,
 // you will have to add them back through the process again to add the watermark.
-// You need to download ImageMagick and FFmpeg to run this program.
+// You need to download FFmpeg to run this program.
 // You need to have the watermark.png file in the same directory as the source files.
-// The FFmpeg and ImageMagick paths must be placed in the same directory as the executable once it is built, GitHub does not allow uploading these files.
+// The FFmpeg path must be placed in the same directory as the executable once it is built, GitHub does not allow uploading these files.
 // The program will log errors to error.log and unsupported files to unsupported_files.log.
 // Note: this project was built with the assistance of GitHub Copilot X Chat AI.
 
@@ -37,7 +39,7 @@ namespace AddIdentityToContent
     /// <seealso cref="FileProcessor"/>
     /// <seealso cref="ImageProcessor"/>
     /// <seealso cref="Logger"/>
-    /// <seealso cref="ImageMagick"/>
+    /// <seealso cref="SixLabors.ImageSharp"/>
     /// <seealso cref="Xabe.FFmpeg"/>
     internal class Program
     {

@@ -19,18 +19,6 @@ namespace AddIdentityToContent
             // Create the output directory if it does not exist
             Directory.CreateDirectory(outputDirectory);
 
-            // Enable OpenCL
-            OpenCL.IsEnabled = true;
-            // Inform the user if OpenCL is enabled or disabled
-            // This can be useful for debugging and troubleshooting
-            // If OpenCL is disabled, some operations may fall back to CPU processing
-            // If OpenCL is enabled, the GPU will be used for processing
-            // This can significantly speed up image processing operations
-            // Note: OpenCL must be supported by the GPU and the drivers for it to work
-            // This uses a feature of the ImageMagick library to enable OpenCL support
-            // A ?: ternary operator is used to display a message based on the IsEnabled property
-            Console.WriteLine($"OpenCL is {(OpenCL.IsEnabled ? "enabled" : "disabled")}.");
-
             // Inform the user which GPU acceleration is enabled
             Console.WriteLine($"Available hardware acceleration codec: {GetHardwareAccelerationCodec()}");
 
@@ -38,7 +26,7 @@ namespace AddIdentityToContent
             Console.WriteLine("------------------");
 
             // Process each image file in the list
-            using (var watermark = new MagickImage(watermarkPath))
+            using (var watermark = Image.Load<Rgba32>(watermarkPath))
             {
                 // Limit the number of concurrent tasks to 8
                 var tasks = imageFiles.Select(async (imageFile, index) =>
@@ -48,25 +36,34 @@ namespace AddIdentityToContent
                         throw new ArgumentNullException(nameof(imageFile), "Image file path or name is null");
 
                     // Load the image file
-                    using (var image = new MagickImage(imageFile.FullPath))
+                    using (var image = Image.Load<Rgba32>(imageFile.FullPath))
                     {
                         // Calculate the maximum dimensions for the watermark
-                        int maxWidth = (int)(image.Width / 3);
-                        int maxHeight = (int)(image.Height / 3);
+                        int maxWidth = image.Width / 3;
+                        int maxHeight = image.Height / 3;
 
-                        // Resize watermark if it exceeds the 9-grid dimensions
-                        if (watermark.Width > maxWidth || watermark.Height > maxHeight)
+                        // Clone and resize watermark for this image to avoid shared mutation
+                        using var scaledWatermark = watermark.Clone(ctx =>
                         {
-                            watermark.Resize((uint)maxWidth, (uint)maxHeight);
-                        }
+                            // Resize watermark if it exceeds the 9-grid dimensions
+                            if (watermark.Width > maxWidth || watermark.Height > maxHeight)
+                            {
+                                ctx.Resize(new ResizeOptions
+                                {
+                                    Size = new Size(maxWidth, maxHeight),
+                                    Mode = ResizeMode.Max
+                                });
+                            }
+                        });
 
-                        // Composite the watermark onto the image
-                        image.Composite(watermark, Gravity.Southwest, CompositeOperator.Over);
+                        // Composite the watermark onto the image at the bottom-left (Southwest)
+                        var location = new Point(0, image.Height - scaledWatermark.Height);
+                        image.Mutate(ctx => ctx.DrawImage(scaledWatermark, location, 1f));
 
                         // Save the image with the watermark
                         string outputFilePath = Path.Combine(outputDirectory, Path.GetFileName(imageFile.FullPath));
                         // Write the image to the output directory
-                        await image.WriteAsync(outputFilePath);
+                        await image.SaveAsync(outputFilePath);
                     }
 
                     // Calculate and display progress percentage
@@ -99,12 +96,6 @@ namespace AddIdentityToContent
 
             // foreground colour green
             Console.ForegroundColor = ConsoleColor.Green;
-
-            // Enable OpenCL for ImageMagick
-            OpenCL.IsEnabled = true;
-            // Inform the user if OpenCL is enabled or disabled
-            // Using a ternary operator to display a message based on the IsEnabled property
-            Console.WriteLine($"OpenCL is {(OpenCL.IsEnabled ? "enabled" : "disabled")}.");
 
             // reset foreground colour
             Console.ResetColor();
@@ -642,16 +633,15 @@ namespace AddIdentityToContent
         /// <param name="gifFilePath">The path to the GIF file.</param>
         /// <returns>The number of frames in the GIF file.</returns>
         /// <remarks>
-        /// This method uses the Magick.NET library to load the GIF file and count the number of frames.
+        /// This method uses the SixLabors.ImageSharp library to load the GIF file and count the number of frames.
         /// </remarks>
-        /// <seealso cref="MagickImageCollection"/>
         private static int GetGifFrameCount(string gifFilePath)
         {
-            // Load the GIF file into a MagickImageCollection
-            using (var collection = new MagickImageCollection(gifFilePath))
+            // Load the GIF file and count the frames
+            using (var gif = Image.Load(gifFilePath))
             {
-                // Return the number of frames in the collection
-                return collection.Count;
+                // Return the number of frames in the image
+                return gif.Frames.Count;
             }
         }
 
